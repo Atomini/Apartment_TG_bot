@@ -5,7 +5,7 @@ conn = sql.connect("database.db")
 with conn:
     cur = conn.cursor()
     cur.execute("""CREATE TABLE IF NOT EXISTS novobud(
-       id                   INT PRIMARY KEY,
+       _id                  INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
        status               TEXT,
        district             TEXT,
        address              TEXT, 
@@ -18,7 +18,7 @@ with conn:
        map_w                TEXT
                 )""")
     cur.execute("""CREATE TABLE IF NOT EXISTS bill(
-    id                      INT PRIMARY KEY,
+    _id                     INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
     user_id                 INT ,
     dollar                  INT ,
     dollar_elect            INT ,
