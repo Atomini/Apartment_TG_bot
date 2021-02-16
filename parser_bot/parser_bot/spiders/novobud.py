@@ -1,6 +1,7 @@
 import scrapy
 from scrapy.crawler import CrawlerProcess
 import re
+import database
 
 
 def get_data():
@@ -31,7 +32,6 @@ class NovobudSpider(scrapy.Spider):
         construction_end = response.xpath('//*[@id="content-page"]/div[1]/div/div[2]'
                                           '/div/div[3]/span[2]/text()').extract()
         description = response.xpath('//*[@id="content-page"]/div[1]/div/div[2]/div/div[4]/p[2]/text()').extract()
-
         for item in zip(status, price, district, address, image, map_, construction_end, description):
             if item[0] != '<span>Все продано</span>':
                 scraped_data = {
@@ -46,6 +46,18 @@ class NovobudSpider(scrapy.Spider):
                     "Окончание постройки": item[6],
                     "Описание": str(item[7]).replace("\\xa", " ")
                 }
+                # запись получених данных в базу даных
+                database.add_data_to_table_novobud(scraped_data["Статус"],
+                                                   scraped_data["Район"],
+                                                   scraped_data["Адресс"],
+                                                   scraped_data["Описание"],
+                                                   scraped_data["Окончание постройки"],
+                                                   scraped_data["link"],
+                                                   scraped_data["Картинка"],
+                                                   scraped_data["Цена"],
+                                                   scraped_data["Карта долгота"],
+                                                   scraped_data["Карта широта"]
+                                                   )
             else:
                 continue
             yield scraped_data

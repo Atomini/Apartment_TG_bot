@@ -1,0 +1,3 @@
+from .table_function import add_data_to_table_bill
+from .table_function import add_data_to_table_novobud
+from .table_function import delete_data
