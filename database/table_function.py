@@ -36,6 +36,12 @@ def add_data_to_table_novobud(*args):
                     "image, price, map_d, map_w) VALUES (?,?,?,?,?,?,?,?,?,?)", data)
         conn.commit()
 
-#---------------test--------------
-# delete_data("bill")
-#add_data_to_table_bill("100" ,"2000" ,"0" ,"40" ,"4000" ,"0" , "100")
+
+def change_value_in_bill(chat_id, argument, value):
+    """Меняет значение в таблице bill
+    принемает argument - название строки
+    value - значение"""
+    with conn:
+        cur = conn.cursor()
+        cur.execute(f"UPDATE bill SET {argument}={value} WHERE user_id = {chat_id}")
+        conn.commit()
