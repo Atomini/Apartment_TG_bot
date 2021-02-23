@@ -1,4 +1,7 @@
 import os
+
+from aiogram.types import message
+
 from misc import bot
 
 
