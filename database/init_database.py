@@ -20,13 +20,15 @@ with conn:
                 )""")
     cur.execute("""CREATE TABLE IF NOT EXISTS bill(
     _id                     INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    user_id                 INT ,
+    user_id                 TEXT UNIQUE ,
     dollar                  INT ,
     dollar_elect            INT ,
     euro                    INT, 
     euro_elect              INT,
     grivna                  INT, 
-    grivna_elect            INT 
+    grivna_elect            INT,
+    income                  INT,
+    goal                    INT 
                 )""")
 
     conn.commit()

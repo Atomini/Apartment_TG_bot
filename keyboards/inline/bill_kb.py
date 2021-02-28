@@ -13,7 +13,8 @@ main_bill_kb = InlineKeyboardMarkup(
 
 in_stock_change_kb = InlineKeyboardMarkup(
     inline_keyboard=[
-        [InlineKeyboardButton(text="Изменить", callback_data=bill_cb.new(action="change", level="start"))]
+        [InlineKeyboardButton(text="Изменить", callback_data=bill_cb.new(action="change", level="start"))],
+        [InlineKeyboardButton(text="Назад", callback_data=bill_cb.new(action="change", level="back"))]
     ]
 )
 
@@ -28,9 +29,24 @@ in_stock_kb = InlineKeyboardMarkup(
     ]
 )
 
+goal_Kb = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [InlineKeyboardButton(text="Цель", callback_data=bill_cb.new(action="change", level="goal"))],
+        [InlineKeyboardButton(text="Доход", callback_data=bill_cb.new(action="change", level="income"))],
+    ]
+)
+
+goal_change_kb = InlineKeyboardMarkup(
+    inline_keyboard=[
+        [InlineKeyboardButton(text="Изменить", callback_data=bill_cb.new(action="goal", level="start"))],
+        [InlineKeyboardButton(text="Назад", callback_data=bill_cb.new(action="change", level="back"))]
+    ]
+)
+
 confirm_cb = InlineKeyboardMarkup(
     inline_keyboard=[
-        [InlineKeyboardButton(text="Подтвердить", callback_data=bill_cb.new(action="change", level="confirm"))]
+        [InlineKeyboardButton(text="Подтвердить", callback_data=bill_cb.new(action="change", level="confirm"))],
+        [InlineKeyboardButton(text="Отменить", callback_data=bill_cb.new(action="change", level="cancel"))]
     ]
 )
 
