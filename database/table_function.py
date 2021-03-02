@@ -1,10 +1,16 @@
 import sqlite3 as sql
+from pathlib import Path
 
-conn = sql.connect("database\\database.db")
-
+# conn = sql.connect("database\\database.db")
 
 # conn = sql.connect("..\\..\\..\\database\\database.db")
 # conn = sql.connect("database.db")
+
+# conn = sql.connect("D:\Python_Project\Apartment_TG_bot\database\database.db")
+
+fad = Path(__file__).parent / 'database.db'
+print(fad)
+conn = sql.connect(fad)
 
 
 def delete_data(table):
@@ -33,6 +39,7 @@ def add_data_to_table_novobud(*args):
     """Добовляет данные в таблицу novobud
     принимает 10 аргументов:
     status, district, address, description, construction_end, link,image, price, map_d, map_w"""
+
     with conn:
         cur = conn.cursor()
         data = args

@@ -33,7 +33,8 @@ class NovobudSpider(scrapy.Spider):
                                           '/div/div[3]/span[2]/text()').extract()
         description = response.xpath('//*[@id="content-page"]/div[1]/div/div[2]/div/div[4]/p[2]/text()').extract()
         for item in zip(status, price, district, address, image, map_, construction_end, description):
-            if item[0] != '<span>Все продано</span>':
+            if item[0] != '<span>Все продано</span>' and item[0] != "<span>Всё продано</span>" \
+                    and item[0] != "<span>Все проодано</span>":
                 scraped_data = {
                     "Статус": str(item[0]).replace("<span>", "").replace("</span>", ""),
                     "Цена": item[1],
