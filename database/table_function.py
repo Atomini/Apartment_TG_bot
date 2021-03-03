@@ -74,6 +74,22 @@ def get_from_bill(chat_id, param):
     conn.commit()
     return par[0][0]
 
+
+def add_to_course(dollar, euro, euro_dollar):
+    cur = conn.cursor()
+    cur.execute(f"UPDATE course SET euro_sales={euro}, dollar_sales={dollar}, "
+                f"euro_dollar_sales={euro_dollar} WHERE id=1")
+    conn.commit()
+
+
+def get_from_course(param):
+    cur = conn.cursor()
+    cur.execute(f"SELECT {param} FROM course WHERE id=1")
+    par = cur.fetchall()
+    conn.commit()
+    return par[0][0]
+
+
 if __name__ == '__main__':
     # change_value_in_bill("10770", "dollar", 1000)
     # delete_data("bill")

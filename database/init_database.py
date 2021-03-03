@@ -30,5 +30,10 @@ with conn:
     income                  INT,
     goal                    INT 
                 )""")
-
+    cur.execute("""CREATE TABLE IF NOT EXISTS course(
+    id                     INT,
+    euro_sales             FLOAT,
+    dollar_sales           FLOAT,
+    euro_dollar_sales      FLOAT 
+                )""")
     conn.commit()

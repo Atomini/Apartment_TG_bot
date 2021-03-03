@@ -3,13 +3,14 @@ import typing
 from aiogram.dispatcher import FSMContext
 from aiogram.types import CallbackQuery
 
-from database.table_function import add_new_user_to_bill, change_value_in_bill, get_from_bill
+from database.table_function import add_new_user_to_bill, change_value_in_bill, get_from_bill, get_from_course
 from keyboards.inline import main_bill_kb, in_stock_change_kb, in_stock_kb, goal_Kb, goal_change_kb, main_keyboard
 from keyboards.inline.bill_kb import confirm_cb
 from keyboards.inline.callback_data import bill_cb
 from misc import dp
 from states import StockDialog
 from aiogram import types
+from parser_bot.parser_bot.spiders.alfa import start_alfa
 
 
 @dp.callback_query_handler(text="bill")
@@ -115,6 +116,19 @@ async def bill_menu(call: CallbackQuery, callback_data: typing.Dict[str, str]):
     # -------------------------------- main menu -----------------------------------
     if action == "main" and level == "0":
         await call.message.edit_text(text="Главное меню", reply_markup=main_keyboard)
+    # -------------------------------- course --------------------------------------
+    if action == "course":
+        start_alfa()
+        dollar = get_from_course("dollar_sales")
+        euro = get_from_course("euro_sales")
+        euro_dollar = get_from_course("euro_dollar_sales")
+        await call.message.edit_text(text="Текущий курс:\n"
+                                          f"EUR/UAH      {euro}\n"
+                                          f"USD/UAH      {dollar}\n"
+                                          f"EUR/USD      {euro_dollar}\n"
+                                          f"\n"
+                                          f"Источник АльфаБанк",
+                                     reply_markup=main_bill_kb)
 
 
 @dp.message_handler(state=StockDialog.confirm)
