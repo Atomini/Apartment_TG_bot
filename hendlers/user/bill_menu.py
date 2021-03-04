@@ -16,34 +16,40 @@ from parser_bot.parser_bot.spiders.alfa import start_alfa
 @dp.callback_query_handler(text="bill")
 async def bill(call: CallbackQuery):
     add_new_user_to_bill(call.message.chat.id)
-    await call.answer(cache_time=10)
+    await call.answer(cache_time=4)
     await call.message.edit_text(text="Меню счет", reply_markup=main_bill_kb)
 
 
 @dp.callback_query_handler(bill_cb.filter())
 async def bill_menu(call: CallbackQuery, callback_data: typing.Dict[str, str]):
-    await call.answer(cache_time=10)
+    await call.answer(cache_time=4)
     action = callback_data['action']
     level = callback_data['level']
     global CURRENCY__
     global BILL_VAR__
     # -------------------------------------bill block --------------------------------------------------
     if action == "stoke":
-        USD = get_from_bill(call.message.chat.id, 'dollar')
-        USD_E = get_from_bill(call.message.chat.id, 'dollar_elect')
-        EUR = get_from_bill(call.message.chat.id, 'euro')
-        EUR_E = get_from_bill(call.message.chat.id, 'euro_elect')
-        UAH = get_from_bill(call.message.chat.id, 'grivna')
-        UAH_E = get_from_bill(call.message.chat.id, 'grivna_elect')
-
+        USD = float(get_from_bill(call.message.chat.id, 'dollar'))
+        USD_E = float(get_from_bill(call.message.chat.id, 'dollar_elect'))
+        EUR = float(get_from_bill(call.message.chat.id, 'euro'))
+        EUR_E = float(get_from_bill(call.message.chat.id, 'euro_elect'))
+        UAH = float(get_from_bill(call.message.chat.id, 'grivna'))
+        UAH_E = float(get_from_bill(call.message.chat.id, 'grivna_elect'))
+        start_alfa()
+        dollar = float(get_from_course("dollar_sales"))
+        euro = float(get_from_course("euro_sales"))
+        euro_dollar = float(get_from_course("euro_dollar_sales"))
+        all_dollar = (USD+USD_E)+(UAH+UAH_E)/euro+(EUR+EUR_E)*euro_dollar
+        all_grivna = (USD+USD_E)*dollar+(UAH+UAH_E)+(EUR+EUR_E)*euro
+        all_euro = (USD+USD_E)/euro_dollar+(UAH+UAH_E)/euro+(EUR+EUR_E)
         await call.message.edit_text(text="В наличии:\n"
-                                          f"USD : {USD} \t  USD_E : {USD_E}\n"
-                                          f"EUR : {EUR} \t  EUR_E : {EUR_E}\n"
-                                          f"UAH : {UAH} \t  UAH_E : {UAH_E}\n"
+                                          f"USD : {round(USD)} \t  USD_E : {round(USD_E)}\n"
+                                          f"EUR : {round(EUR)} \t  EUR_E : {round(EUR_E)}\n"
+                                          f"UAH : {round(UAH)} \t  UAH_E : {round(UAH_E)}\n"
                                           "В одной валюте: \n"
-                                          "USD : 0000 \n"
-                                          "EUR : 0000 \n"
-                                          "UAH : 0000 ",
+                                          f"USD : {round(all_dollar)} \n"
+                                          f"EUR : {round(all_euro)} \n"
+                                          f"UAH : {round(all_grivna)} ",
                                      reply_markup=in_stock_change_kb)
 
     if action == "change" and level == "start":
@@ -91,11 +97,20 @@ async def bill_menu(call: CallbackQuery, callback_data: typing.Dict[str, str]):
     if action == "goal" and level == "0":
         GOAL = get_from_bill(call.message.chat.id, 'goal')
         INCOME = get_from_bill(call.message.chat.id, 'income')
-        term = None
-        full_UAH = None
+        USD = float(get_from_bill(call.message.chat.id, 'dollar'))
+        USD_E = float(get_from_bill(call.message.chat.id, 'dollar_elect'))
+        EUR = float(get_from_bill(call.message.chat.id, 'euro'))
+        EUR_E = float(get_from_bill(call.message.chat.id, 'euro_elect'))
+        UAH = float(get_from_bill(call.message.chat.id, 'grivna'))
+        UAH_E = float(get_from_bill(call.message.chat.id, 'grivna_elect'))
+        start_alfa()
+        dollar = float(get_from_course("dollar_sales"))
+        euro = float(get_from_course("euro_sales"))
+        all_grivna = (USD + USD_E) * dollar + (UAH + UAH_E) + (EUR + EUR_E) * euro
+        term = round((GOAL-all_grivna)/INCOME)
         await call.message.edit_text(text=f"Цель составляет {GOAL} грн\n"
                                           f"Доход составляет {INCOME} грн\n"
-                                          f"В наличии {full_UAH} грн\n"
+                                          f"В наличии {round(all_grivna)} грн\n"
                                           f"Приблизительное время до достижения цели {term} месяцев",
                                      reply_markup=goal_change_kb)
 
@@ -141,7 +156,7 @@ async def change_money(message: types.Message, state: FSMContext):
 
 @dp.callback_query_handler(state=StockDialog.change)
 async def chan(call: CallbackQuery, state: FSMContext):
-    await call.answer(cache_time=10)
+    await call.answer(cache_time=4)
     if call.data == "bill:change:cancel":
         await state.finish()
         await call.message.answer(text="Изменение отменено", reply_markup=main_bill_kb)
