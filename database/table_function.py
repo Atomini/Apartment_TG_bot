@@ -1,16 +1,9 @@
 import sqlite3 as sql
 from pathlib import Path
 
-# conn = sql.connect("database\\database.db")
-
-# conn = sql.connect("..\\..\\..\\database\\database.db")
-# conn = sql.connect("database.db")
-
-# conn = sql.connect("D:\Python_Project\Apartment_TG_bot\database\database.db")
-
-fad = Path(__file__).parent / 'database.db'
-print(fad)
-conn = sql.connect(fad)
+way = Path(__file__).parent / 'database.db'
+print(way)
+conn = sql.connect(way)
 
 
 def delete_data(table):
@@ -20,19 +13,6 @@ def delete_data(table):
         cur = conn.cursor()
         cur.execute(f"""DELETE FROM {table}""")
         conn.commit()
-
-
-# сейчас не актуально замененно на add_new_user_to_bill
-# def add_data_to_table_bill(*args):
-#     """Добавляет даные в таблицу bill
-#     принимает 9 аргуменьов:
-#     user_id, dollar, dollar_elect, euro, euro_elect, grivna, grivna_elect, income, goal"""
-#     with conn:
-#         cur = conn.cursor()
-#         data = args
-#         cur.execute("INSERT INTO bill (user_id, dollar, dollar_elect, euro, euro_elect, grivna,"
-#                     " grivna_elect, income, goal) VALUES (?,?,?,?,?,?,?,?,?)", data)
-#         conn.commit()
 
 
 def add_data_to_table_novobud(*args):
@@ -90,7 +70,22 @@ def get_from_course(param):
     return par[0][0]
 
 
+def get_from_novobud():
+    try:
+        cur = conn.cursor()
+        cur.execute("""SELECT * FROM novobud""")
+        records = cur.fetchall()
+        cur.close()
+        return records
+    except sql.Error as error:
+        print("Ошибка", error)
+    finally:
+        if cur:
+            cur.close()
+
+
 if __name__ == '__main__':
     # change_value_in_bill("10770", "dollar", 1000)
-    # delete_data("bill")
-    get_from_bill(785617282, "dollar")
+    # delete_data
+    get_from_novobud()
+

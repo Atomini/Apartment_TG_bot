@@ -37,27 +37,6 @@ def start_alfa():
         process.stop()
 
 
-# def start_alfa(spider=AlfaSpider):
-#     def f(q):
-#         try:
-#             runner = crawler.CrawlerRunner()
-#             deferred = runner.crawl(spider)
-#             deferred.addBoth(lambda _: reactor.stop())
-#             reactor.run()
-#             q.put(None)
-#         except Exception as e:
-#             q.put(e)
-#
-#     q = Queue()
-#     p = Process(target=f, args=(q,))
-#     p.start()
-#     result = q.get()
-#     p.join()
-#
-#     if result is not None:
-#         raise result
-
-
 if __name__ == "__main__":
     process = crawler.CrawlerProcess({
         'USER_AGENT': 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'

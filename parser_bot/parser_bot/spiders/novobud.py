@@ -1,15 +1,9 @@
 import scrapy
+import twisted
+from scrapy import crawler
 from scrapy.crawler import CrawlerProcess
 import re
 import database
-
-
-def get_data():
-    process = CrawlerProcess({
-        'USER_AGENT': 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'
-    })
-    process.crawl(NovobudSpider)
-    process.start()  # the script will block here until the crawling is finished
 
 
 class NovobudSpider(scrapy.Spider):
@@ -62,6 +56,19 @@ class NovobudSpider(scrapy.Spider):
             else:
                 continue
             yield scraped_data
+
+
+def start_novobud():
+    process_ = crawler.CrawlerProcess({
+        'USER_AGENT': 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'
+    })
+    try:
+        process_.crawl(NovobudSpider)
+        process_.start()  # the script will block here until the crawling is finished
+        process_.stop()
+    except twisted.internet.error.ReactorNotRestartable:
+        process_.crawl(NovobudSpider)
+        process_.stop()
 
 
 if __name__ == "__main__":
