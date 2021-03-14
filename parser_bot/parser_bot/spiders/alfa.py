@@ -24,6 +24,51 @@ class AlfaSpider(scrapy.Spider):
         yield euro_sales[0].strip(), dollar_sales[0].strip(), euro_dollar_sales[0]
 
 
+# def start_alfa():
+#     process = crawler.CrawlerProcess({
+#         'USER_AGENT': 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'
+#     })
+#     try:
+#         process.crawl(AlfaSpider)
+#         process.start()  # the script will block here until the crawling is finished
+#         process.stop()
+#     except twisted.internet.error.ReactorNotRestartable:
+#         process.crawl(AlfaSpider)
+#         process.stop()
+# def start_alfa():
+#     from scrapy.crawler import CrawlerRunner
+#     from twisted.internet import reactor
+#     runner = CrawlerRunner()
+#     d = runner.crawl(AlfaSpider)
+#     d.addBoth(lambda _: reactor.stop())
+#     reactor.run()
+#
+# def start_alfa(spider):
+#     def f(q):
+#         try:
+#             runner = crawler.CrawlerRunner()
+#             deferred = runner.crawl(spider)
+#             deferred.addBoth(lambda _: reactor.stop())
+#             reactor.run()
+#             q.put(None)
+#         except Exception as e:
+#             q.put(e)
+#
+#     q = Queue()
+#     p = Process(target=f, args=(q,))
+#     p.start()
+#     result = q.get()
+#     p.join()
+#
+#     if result is not None:
+#         raise result
+# def start_alfa():
+#     runner = crawler.CrawlerRunner()
+#     runner.crawl(AlfaSpider)
+#     d = runner.join()
+#     d.addBoth(lambda _: reactor.stop())
+
+
 def start_alfa():
     process = crawler.CrawlerProcess({
         'USER_AGENT': 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'
@@ -38,9 +83,21 @@ def start_alfa():
 
 
 if __name__ == "__main__":
-    process = crawler.CrawlerProcess({
-        'USER_AGENT': 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'
-    })
-    process.crawl(AlfaSpider)
-    process.start(stop_after_crawl=False)  # the script will block here until the crawling is finished
-    process.stop()
+    import time
+    start_alfa(AlfaSpider)
+
+    time.sleep(5)
+    start_alfa(AlfaSpider)
+
+
+
+
+
+# if __name__ == "__main__":
+#     process = crawler.CrawlerProcess({
+#         'USER_AGENT': 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'
+#     })
+#     process.crawl(AlfaSpider)
+#     process.start(stop_after_crawl=False)  # the script will block here until the crawling is finished
+#     process.stop()
+
