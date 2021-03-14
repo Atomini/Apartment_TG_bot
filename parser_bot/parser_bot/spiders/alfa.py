@@ -1,10 +1,40 @@
-import scrapy
-import scrapy.crawler as crawler
-from multiprocessing import Process, Queue
-
-import twisted
-from twisted.internet import reactor
 from database.table_function import add_to_course
+import logging
+import multiprocessing as mp
+
+import scrapy
+from scrapy.crawler import CrawlerProcess
+from scrapy.signals import item_passed
+from scrapy.utils.project import get_project_settings
+from pydispatch import dispatcher
+
+
+class CrawlerWorker(mp.Process):
+    name = "crawlerworker"
+
+    def __init__(self, spider, result_queue):
+        mp.Process.__init__(self)
+        self.result_queue = result_queue
+        self.items = list()
+        self.spider = spider
+        self.logger = logging.getLogger(self.name)
+
+        self.settings = get_project_settings()
+        self.logger.setLevel(logging.DEBUG)
+        self.logger.debug("Create CrawlerProcess with settings {}".format(self.settings))
+        self.crawler = CrawlerProcess(self.settings)
+
+        dispatcher.connect(self._item_passed, item_passed)
+
+    def _item_passed(self, item):
+        self.logger.debug("Adding Item {} to {}".format(item, self.items))
+        self.items.append(item)
+
+    def run(self):
+        self.crawler.crawl(self.spider)
+        self.crawler.start()
+        self.crawler.stop()
+        self.result_queue.put(self.items)
 
 
 class AlfaSpider(scrapy.Spider):
@@ -24,80 +54,18 @@ class AlfaSpider(scrapy.Spider):
         yield euro_sales[0].strip(), dollar_sales[0].strip(), euro_dollar_sales[0]
 
 
-# def start_alfa():
-#     process = crawler.CrawlerProcess({
-#         'USER_AGENT': 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'
-#     })
-#     try:
-#         process.crawl(AlfaSpider)
-#         process.start()  # the script will block here until the crawling is finished
-#         process.stop()
-#     except twisted.internet.error.ReactorNotRestartable:
-#         process.crawl(AlfaSpider)
-#         process.stop()
-# def start_alfa():
-#     from scrapy.crawler import CrawlerRunner
-#     from twisted.internet import reactor
-#     runner = CrawlerRunner()
-#     d = runner.crawl(AlfaSpider)
-#     d.addBoth(lambda _: reactor.stop())
-#     reactor.run()
-#
-# def start_alfa(spider):
-#     def f(q):
-#         try:
-#             runner = crawler.CrawlerRunner()
-#             deferred = runner.crawl(spider)
-#             deferred.addBoth(lambda _: reactor.stop())
-#             reactor.run()
-#             q.put(None)
-#         except Exception as e:
-#             q.put(e)
-#
-#     q = Queue()
-#     p = Process(target=f, args=(q,))
-#     p.start()
-#     result = q.get()
-#     p.join()
-#
-#     if result is not None:
-#         raise result
-# def start_alfa():
-#     runner = crawler.CrawlerRunner()
-#     runner.crawl(AlfaSpider)
-#     d = runner.join()
-#     d.addBoth(lambda _: reactor.stop())
-
-
 def start_alfa():
-    process = crawler.CrawlerProcess({
-        'USER_AGENT': 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'
-    })
-    try:
-        process.crawl(AlfaSpider)
-        process.start()  # the script will block here until the crawling is finished
-        process.stop()
-    except twisted.internet.error.ReactorNotRestartable:
-        process.crawl(AlfaSpider)
-        process.stop()
+    result_queue1 = mp.Queue()
+    crawler = CrawlerWorker((AlfaSpider), result_queue1)
+    crawler.start()
+    crawler.join()
 
 
 if __name__ == "__main__":
     import time
-    start_alfa(AlfaSpider)
+    start_alfa()
 
     time.sleep(5)
-    start_alfa(AlfaSpider)
+    start_alfa()
 
-
-
-
-
-# if __name__ == "__main__":
-#     process = crawler.CrawlerProcess({
-#         'USER_AGENT': 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'
-#     })
-#     process.crawl(AlfaSpider)
-#     process.start(stop_after_crawl=False)  # the script will block here until the crawling is finished
-#     process.stop()
 

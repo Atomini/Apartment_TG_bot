@@ -1,6 +1,6 @@
 from aiogram.types import CallbackQuery
 
-from database import get_from_novobud
+from database import get_from_novobud, delete_data
 from keyboards.inline import offers_kb
 from misc import dp
 from parser_bot.parser_bot.spiders.novobud import start_novobud
@@ -16,6 +16,7 @@ async def apartment(call: CallbackQuery):
 async def novobud (call: CallbackQuery):
     await call.answer(cache_time=4)
     await call.message.edit_text(text="Собираем дание...\nПодождите несколько минут")
+    delete_data("novobud")
     start_novobud()
     data = get_from_novobud()
     for row in data:

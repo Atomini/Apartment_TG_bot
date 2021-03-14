@@ -1,9 +1,43 @@
 import scrapy
 import twisted
 from scrapy import crawler
-from scrapy.crawler import CrawlerProcess
 import re
 import database
+import logging
+import multiprocessing as mp
+import scrapy
+from scrapy.crawler import CrawlerProcess
+from scrapy.signals import item_passed
+from scrapy.utils.project import get_project_settings
+from pydispatch import dispatcher
+
+
+class CrawlerWorker(mp.Process):
+    name = "crawlerworker"
+
+    def __init__(self, spider, result_queue):
+        mp.Process.__init__(self)
+        self.result_queue = result_queue
+        self.items = list()
+        self.spider = spider
+        self.logger = logging.getLogger(self.name)
+
+        self.settings = get_project_settings()
+        self.logger.setLevel(logging.DEBUG)
+        self.logger.debug("Create CrawlerProcess with settings {}".format(self.settings))
+        self.crawler = CrawlerProcess(self.settings)
+
+        dispatcher.connect(self._item_passed, item_passed)
+
+    def _item_passed(self, item):
+        self.logger.debug("Adding Item {} to {}".format(item, self.items))
+        self.items.append(item)
+
+    def run(self):
+        self.crawler.crawl(self.spider)
+        self.crawler.start()
+        self.crawler.stop()
+        self.result_queue.put(self.items)
 
 
 class NovobudSpider(scrapy.Spider):
@@ -59,16 +93,10 @@ class NovobudSpider(scrapy.Spider):
 
 
 def start_novobud():
-    process_ = crawler.CrawlerProcess({
-        'USER_AGENT': 'Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)'
-    })
-    try:
-        process_.crawl(NovobudSpider)
-        process_.start()  # the script will block here until the crawling is finished
-        process_.stop()
-    except twisted.internet.error.ReactorNotRestartable:
-        process_.crawl(NovobudSpider)
-        process_.stop()
+    result_queue1 = mp.Queue()
+    crawler = CrawlerWorker((NovobudSpider), result_queue1)
+    crawler.start()
+    crawler.join()
 
 
 if __name__ == "__main__":
