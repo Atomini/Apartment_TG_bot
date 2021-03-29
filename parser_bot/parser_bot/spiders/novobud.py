@@ -1,6 +1,4 @@
-import scrapy
-import twisted
-from scrapy import crawler
+
 import re
 import database
 import logging
@@ -94,7 +92,7 @@ class NovobudSpider(scrapy.Spider):
 
 def start_novobud():
     result_queue1 = mp.Queue()
-    crawler = CrawlerWorker((NovobudSpider), result_queue1)
+    crawler = CrawlerWorker(NovobudSpider, result_queue1)
     crawler.start()
     crawler.join()
 
