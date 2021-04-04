@@ -84,6 +84,33 @@ def get_from_novobud():
             cur.close()
 
 
+def add_data_to_table_domria(*args):
+    """Добовляет данные в таблицу domria
+    принимает 11 аргументов:
+    status, district, address, description, construction_end, link,image, price, map_d, map_w"""
+
+    with conn:
+        cur = conn.cursor()
+        data = args
+        cur.execute("INSERT INTO domria (link, description, latitude, longitude, price_USD, price_EUR, price_UAH,"
+                    " street_name, building_number, publishing_date, photo_link) VALUES (?,?,?,?,?,?,?,?,?,?,?)", data)
+        conn.commit()
+
+
+def get_from_domria():
+    try:
+        cur = conn.cursor()
+        cur.execute("""SELECT * FROM domria""")
+        records = cur.fetchall()
+        cur.close()
+        return records
+    except sql.Error as error:
+        print("Ошибка", error)
+    finally:
+        if cur:
+            cur.close()
+
+
 if __name__ == '__main__':
     # change_value_in_bill("10770", "dollar", 1000)
     # delete_data
