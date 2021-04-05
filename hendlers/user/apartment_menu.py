@@ -1,8 +1,11 @@
+import aiogram
+from aiogram import types
 from aiogram.types import CallbackQuery
 
-from database import get_from_novobud, delete_data
+from database import get_from_novobud, delete_data, get_from_domria
 from keyboards.inline import offers_kb
 from misc import dp
+from parser_bot.parser_bot.spiders.dom_ria import start_domria
 from parser_bot.parser_bot.spiders.novobud import start_novobud
 
 
@@ -13,7 +16,7 @@ async def apartment(call: CallbackQuery):
 
 
 @dp.callback_query_handler(text="novobud")
-async def novobud (call: CallbackQuery):
+async def novobud(call: CallbackQuery):
     await call.answer(cache_time=4)
     await call.message.edit_text(text="Собираем дание...\nПодождите несколько минут")
     delete_data("novobud")
@@ -38,9 +41,48 @@ async def novobud (call: CallbackQuery):
                                        f"<b>Окончание строительства:</b> {construction_end}\n"
                                        f"<b>Описание:</b> {description}\n"
                                        f"<b>Цена за грн/м2:</b>  {price}\n"
-                                       f"<b>Цена за 40м2:</b> {int(price)*40}\n"
+                                       f"<b>Цена за 40м2:</b> {int(price) * 40}\n"
                                        f"<b>Ссылка:</b> {link}")
     await call.message.answer(text="<b>Подбор закончен</b>", reply_markup=offers_kb)
 
 
+@dp.callback_query_handler(text="domria")
+async def domria(call: CallbackQuery):
+    await call.answer(cache_time=4)
+    await call.message.edit_text(text="Собираем дание...\nПодождите несколько минут")
+    delete_data("domria")
+    start_domria()
+    data = get_from_domria()
+    for row in data:
+        link = row[1]
+        description = row[2]
+        latitude = row[3]
+        longitude = row[4]
+        price_USD = row[5]
+        price_EUR = row[6]
+        price_UAH = row[7]
+        street_name = row[8]
+        building_number = row[9]
+        publishing_date = row[10]
+        photo_link = row[11]
+        # TODO   Написать добавление сообщения с фото для реализации необходимо изменить ссылку на изображение
 
+        #         photo = photo_link.replace("'","").replace("[","").replace("]","").split(",")
+        #         print(photo[1])
+        #          for photos in photo:
+        #              if photos != "https://cdn.riastatic.com/photos/":
+        #                  media = types.MediaGroup.attach_photo(photos)
+        #         await call.message.answer_photo(photo[1])
+        if longitude is not None:
+            await call.message.answer_location(latitude=latitude, longitude=longitude)
+        else:
+            await call.message.answer(text="Координаты не указаны")
+        await call.message.answer(text=f"<b>Описание:</b> {description}\n"
+                                       f"<b>Дата публикации:</b>  {publishing_date}\n"
+                                       f"<b>Адресс:</b> {street_name} №{building_number}\n"
+                                       f"<b>Цена USD:</b> {price_USD}\n"
+                                       f"<b>Цена EUR:</b> {price_EUR}\n"
+                                       f"<b>Цена UAH:</b> {price_UAH}\n"
+                                       f"<b>Ссылка:</b> {link}\n"
+                                  )
+    await call.message.answer(text="<b>Подбор закончен</b>", reply_markup=offers_kb)
