@@ -1,6 +1,5 @@
-import aiogram
 from aiogram import types
-from aiogram.types import CallbackQuery
+from aiogram.types import CallbackQuery, InputMediaPhoto
 
 from database import get_from_novobud, delete_data, get_from_domria
 from keyboards.inline import offers_kb
@@ -65,14 +64,13 @@ async def domria(call: CallbackQuery):
         building_number = row[9]
         publishing_date = row[10]
         photo_link = row[11]
-        # TODO   Написать добавление сообщения с фото для реализации необходимо изменить ссылку на изображение
+        # TODO   Написать добавление изображений медиагрупой
+        photo = photo_link.replace("'", "").replace("[", "").replace("]", "").split(",")
+        try:
+            await call.message.answer_photo(photo=photo[1])
+        except IndexError:
+            await call.message.answer_photo(photo=photo[1])
 
-        #         photo = photo_link.replace("'","").replace("[","").replace("]","").split(",")
-        #         print(photo[1])
-        #          for photos in photo:
-        #              if photos != "https://cdn.riastatic.com/photos/":
-        #                  media = types.MediaGroup.attach_photo(photos)
-        #         await call.message.answer_photo(photo[1])
         if longitude is not None:
             await call.message.answer_location(latitude=latitude, longitude=longitude)
         else:

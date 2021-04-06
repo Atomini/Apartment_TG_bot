@@ -90,7 +90,7 @@ class DomRiaSpider(scrapy.Spider):
             building_number = apartment["building_number_str"]
             publishing_date = apartment["publishing_date"][0:10]
             photo_link = [
-                ("https://cdn.riastatic.com/photos/" + (apartment["photos"][photo]["file"]).replace('.jpg', 'b.webp'))
+                ("https://cdn.riastatic.com/photos/" + (apartment["photos"][photo]["file"]).replace('.jpg', 'b.jpg'))
                 for photo in apartment["photos"]]
             database.add_data_to_table_domria(link, description, latitude, longitude, price_USD, price_EUR, price_UAH,
                                               street_name, building_number, publishing_date, str(photo_link))
