@@ -1,5 +1,6 @@
 from aiogram import types
 from aiogram.types import CallbackQuery, InputMediaPhoto
+from aiogram.utils import exceptions
 
 from database import get_from_novobud, delete_data, get_from_domria
 from keyboards.inline import offers_kb
@@ -66,7 +67,11 @@ async def domria(call: CallbackQuery):
         photo_link = row[11]
         # TODO   Написать добавление изображений медиагрупой
         photo = photo_link.replace("'", "").replace("[", "").replace("]", "").split(",")
-        await call.message.answer_photo(photo=photo[0])
+        try:
+            await call.message.answer_photo(photo=photo[0])
+        except exceptions.RetryAfter:
+            await call.message.answer_photo(photo=photo[1])
+
         if longitude is not None:
             await call.message.answer_location(latitude=latitude, longitude=longitude)
         else:
