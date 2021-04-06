@@ -66,11 +66,7 @@ async def domria(call: CallbackQuery):
         photo_link = row[11]
         # TODO   Написать добавление изображений медиагрупой
         photo = photo_link.replace("'", "").replace("[", "").replace("]", "").split(",")
-        try:
-            await call.message.answer_photo(photo=photo[1])
-        except IndexError:
-            await call.message.answer_photo(photo=photo[1])
-
+        await call.message.answer_photo(photo=photo[0])
         if longitude is not None:
             await call.message.answer_location(latitude=latitude, longitude=longitude)
         else:

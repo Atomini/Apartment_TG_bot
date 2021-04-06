@@ -55,7 +55,7 @@ class DomRiaSpider(scrapy.Spider):
     }
 
     def parse(self, response):
-        for page in range(0, 1): # Указать количество страниц для поиска
+        for page in range(0, 5): # Указать количество страниц для поиска
             url = f"https://dom.ria.com/searchEngine/?links-under-filter=on&category=1&realty_type=2&operation_type=1&" \
                   f"fullCategoryOperation=1_2_1&wo_dupl=1&page={page}&state_id=20&city_id=20&limit=20&sort" \
                   f"=inspected_sort&characteristic%5B234%5D%5Bto%5D=25000&characteristic%5B242%5D=239&characteristic" \
