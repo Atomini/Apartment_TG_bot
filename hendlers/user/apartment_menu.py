@@ -2,11 +2,12 @@ from aiogram import types
 from aiogram.types import CallbackQuery, InputMediaPhoto
 from aiogram.utils import exceptions
 
-from database import get_from_novobud, delete_data, get_from_domria
+from database import get_from_novobud, delete_data, get_from_domria, get_from_olx
 from keyboards.inline import offers_kb
 from misc import dp
 from parser_bot.parser_bot.spiders.dom_ria import start_domria
 from parser_bot.parser_bot.spiders.novobud import start_novobud
+from parser_bot.parser_bot.spiders.olx import start_olx
 
 
 @dp.callback_query_handler(text="apartment")
@@ -83,5 +84,27 @@ async def domria(call: CallbackQuery):
                                        f"<b>Цена EUR:</b> {price_EUR}\n"
                                        f"<b>Цена UAH:</b> {price_UAH}\n"
                                        f"<b>Ссылка:</b> {link}\n"
+                                  )
+    await call.message.answer(text="<b>Подбор закончен</b>", reply_markup=offers_kb)
+
+
+@dp.callback_query_handler(text="olx")
+async def domria(call: CallbackQuery):
+    await call.answer(cache_time=4)
+    await call.message.edit_text(text="Собираем дание...\nПодождите несколько минут")
+    delete_data("olx")
+    start_olx()
+    data = get_from_olx()
+    for row in data:
+        title = row[1]
+        price = row[2]
+        link = row[3]
+        image = row[4]
+        add_date = row[5]
+        await call.message.answer_photo(image)
+        await call.message.answer(text=f" {title} \n"
+                                       f"Цена: {price}\n"
+                                       f"Дата публикации: {add_date}\n"
+                                       f"ссылка: {link}"
                                   )
     await call.message.answer(text="<b>Подбор закончен</b>", reply_markup=offers_kb)

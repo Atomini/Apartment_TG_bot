@@ -33,21 +33,29 @@ with conn:
         photo_link          TEXT
                 )""")
     cur.execute("""CREATE TABLE IF NOT EXISTS bill(
-    _id                     INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-    user_id                 TEXT UNIQUE ,
-    dollar                  INT ,
-    dollar_elect            INT ,
-    euro                    INT, 
-    euro_elect              INT,
-    grivna                  INT, 
-    grivna_elect            INT,
-    income                  INT,
-    goal                    INT 
+        _id                     INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        user_id                 TEXT UNIQUE ,
+        dollar                  INT ,
+        dollar_elect            INT ,
+        euro                    INT, 
+        euro_elect              INT,
+        grivna                  INT, 
+        grivna_elect            INT,
+        income                  INT,
+        goal                    INT 
                 )""")
     cur.execute("""CREATE TABLE IF NOT EXISTS course(
-    id                     INT,
-    euro_sales             FLOAT,
-    dollar_sales           FLOAT,
-    euro_dollar_sales      FLOAT 
+        id                     INT,
+        euro_sales             FLOAT,
+        dollar_sales           FLOAT,
+        euro_dollar_sales      FLOAT 
                 )""")
+    cur.execute("""CREATE TABLE IF NOT EXISTS olx(
+        _id                     INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        title                   UNIQUE TEXT,
+        price                   TEXT,
+        link                    UNIQUE TEXT,
+        image                   TEXT,
+        add_date                TEXT
+    )""")
     conn.commit()

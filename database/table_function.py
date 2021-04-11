@@ -111,8 +111,32 @@ def get_from_domria():
             cur.close()
 
 
+def add_data_to_table_olx(*args):
+    """Добовляет данные в таблицу olx
+    принимает 5 аргументов:
+    title, price, link, image, add_date"""
+    with conn:
+        cur = conn.cursor()
+        data = args
+        cur.execute("INSERT OR IGNORE INTO olx (title, price, link, image, add_date ) VALUES (?,?,?,?,?)", data)
+        conn.commit()
+
+
+def get_from_olx():
+    try:
+        cur = conn.cursor()
+        cur.execute("""SELECT * FROM olx""")
+        records = cur.fetchall()
+        cur.close()
+        return records
+    except sql.Error as error:
+        print("Ошибка", error)
+    finally:
+        if cur:
+            cur.close()
+
+
 if __name__ == '__main__':
     # change_value_in_bill("10770", "dollar", 1000)
     # delete_data
     get_from_novobud()
-
