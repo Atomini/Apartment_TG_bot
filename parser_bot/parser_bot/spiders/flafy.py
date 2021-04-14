@@ -2,7 +2,6 @@ import scrapy
 from scrapy.crawler import CrawlerProcess
 
 
-
 class FlafySpider(scrapy.Spider):
     name = 'flafy'
     start_urls = ['https://flatfy.ua/search?currency=UAH&geo_id=27&price_max=650000&section_id=1']
@@ -10,7 +9,7 @@ class FlafySpider(scrapy.Spider):
     def parse(self, response):
         last_page = response.xpath('//*[@class="paging-button"]/text()').extract()
         if int(last_page[-1]) > 3:
-            pages: int = 3
+            pages: int = 1
         else:
             pages: int = int(last_page)
 
@@ -19,14 +18,19 @@ class FlafySpider(scrapy.Spider):
             yield scrapy.Request(url, callback=self.parse_page)
 
     def parse_page(self, response, **kwargs):
-        link = response.xpath('//*[@rel="nofollow noopener"]/@href').extract()
+        link = response.xpath('//*[@class="realty-preview"]/@id').extract()
         title = response.xpath('//*[@rel="nofollow noopener"]/text()').extract()
-        district = response.xpath('//*[@class="realty-preview__sub-title"]/a[1]/text()').extract()
-        # '//*[@id="380231826"]/div[1]/div[1]/div/div[1]/div[1]/div[2]/a[1]/text()'
+        district = response.xpath('//*[@class="realty-content-layout__sub-title-row"]/a[1]/text()').extract()
+        price = response.xpath('//*[@class="realty-preview__price"]/text()').extract()
+        image = response.xpath('//*[@class="realty-preview__image-holder"]/picture/img').extract()
+
         print(link)
         print(title)
         print(district)
-        print(len(link), "-",len(title), "-",len(district))
+        print(price)
+        print(image)
+        print(len(link), "-", len(title), "-", len(district), "-", len(price))
+
 
 if __name__ == "__main__":
     process = CrawlerProcess({
@@ -34,3 +38,5 @@ if __name__ == "__main__":
     })
     process.crawl(FlafySpider)
     process.start()  # the script will block here until the crawling is finished
+
+
