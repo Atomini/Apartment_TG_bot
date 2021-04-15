@@ -1,5 +1,6 @@
 import scrapy
 from scrapy.crawler import CrawlerProcess
+from requests_html import HTMLSession
 
 
 class FlafySpider(scrapy.Spider):
@@ -7,27 +8,44 @@ class FlafySpider(scrapy.Spider):
     start_urls = ['https://flatfy.ua/search?currency=UAH&geo_id=27&price_max=650000&section_id=1']
 
     def parse(self, response):
+
         last_page = response.xpath('//*[@class="paging-button"]/text()').extract()
         if int(last_page[-1]) > 3:
             pages: int = 1
         else:
             pages: int = int(last_page)
 
+        # for page in range(0, pages):
+        #     url = response.url
+        #     s = HTMLSession()
+        #     r = s.get(url)
+        #     r.html.render(sleep=1)
+        #     link = r.html.xpath('//*[@class="realty-preview"]/@id')
+        #     print(link)
         for page in range(0, pages):
             url = f'https://flatfy.ua/search?currency=UAH&geo_id=27&page={page}&price_max=650000&section_id=1'
             yield scrapy.Request(url, callback=self.parse_page)
 
     def parse_page(self, response, **kwargs):
+
         link = response.xpath('//*[@class="realty-preview"]/@id').extract()
         title = response.xpath('//*[@rel="nofollow noopener"]/text()').extract()
         district = response.xpath('//*[@class="realty-content-layout__sub-title-row"]/a[1]/text()').extract()
         price = response.xpath('//*[@class="realty-preview__price"]/text()').extract()
-        image = response.xpath('//*[@class="realty-preview__image-holder"]/picture/img').extract()
+        # image = response.xpath('//*[@class="realty-preview__image"]/img/@src').extract()
+
+        url = response.url
+        s = HTMLSession()
+        r = s.get(url)
+        r.html.render(sleep=1)
+        rooms = r.html.xpath('//*[@class="realty-preview__info rooms"]/text()')
+        image = r.html.xpath('//*[@class="realty-preview__image"]/img/text()')
 
         print(link)
         print(title)
         print(district)
         print(price)
+        print(rooms)
         print(image)
         print(len(link), "-", len(title), "-", len(district), "-", len(price))
 
