@@ -51,11 +51,17 @@ with conn:
         euro_dollar_sales      FLOAT 
                 )""")
     cur.execute("""CREATE TABLE IF NOT EXISTS olx(
-        _id                     INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
-        title                   UNIQUE TEXT,
-        price                   TEXT,
-        link                    UNIQUE TEXT,
-        image                   TEXT,
-        add_date                TEXT
-    )""")
-    conn.commit()
+        _id                    INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        title                  TEXT UNIQUE,
+        price                  TEXT,
+        link                   TEXT UNIQUE,
+        image                  TEXT,
+        add_date               TEXT
+                )""")
+    cur.execute("""CREATE TABLE IF NOT EXISTS flafy(
+        _id                    INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+        title                  TEXT,
+        price                  TEXT,
+        link                   TEXT UNIQUE,
+        district               TEXT
+                )""")

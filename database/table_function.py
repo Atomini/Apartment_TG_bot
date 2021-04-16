@@ -136,6 +136,31 @@ def get_from_olx():
             cur.close()
 
 
+def add_data_to_table_flafy(*args):
+    """Добовляет данные в таблицу flafy
+        принимает 4 аргументов:
+        title, price, link, district"""
+    with conn:
+        cur = conn.cursor()
+        data = args
+        cur.execute("INSERT OR IGNORE INTO flafy(title, price, link, district) VALUES (?,?,?,?)", data)
+        conn.commit()
+
+
+def get_from_flafy():
+    try:
+        cur = conn.cursor()
+        cur.execute("""SELECT * FROM flafy""")
+        records = cur.fetchall()
+        cur.close()
+        return records
+    except sql.Error as error:
+        print("Ошибка", error)
+    finally:
+        if cur:
+            cur.close()
+
+
 if __name__ == '__main__':
     # change_value_in_bill("10770", "dollar", 1000)
     # delete_data
