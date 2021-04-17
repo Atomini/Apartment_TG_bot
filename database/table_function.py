@@ -1,6 +1,7 @@
 import sqlite3 as sql
 from pathlib import Path
 
+#  ддя подключения к локальной базе данных
 way = Path(__file__).parent / 'database.db'
 print(way)
 conn = sql.connect(way)
@@ -56,6 +57,7 @@ def get_from_bill(chat_id, param):
 
 
 def add_to_course(dollar, euro, euro_dollar):
+    """Обновляет данные в БД - таблица course"""
     cur = conn.cursor()
     cur.execute(f"UPDATE course SET euro_sales={euro}, dollar_sales={dollar}, "
                 f"euro_dollar_sales={euro_dollar} WHERE id=1")
@@ -63,6 +65,7 @@ def add_to_course(dollar, euro, euro_dollar):
 
 
 def get_from_course(param):
+    """Для получение данних из БД - таблица course"""
     cur = conn.cursor()
     cur.execute(f"SELECT {param} FROM course WHERE id=1")
     par = cur.fetchall()
@@ -71,6 +74,7 @@ def get_from_course(param):
 
 
 def get_from_novobud():
+    """Возвращает данные из БД в таблицу novobud"""
     try:
         cur = conn.cursor()
         cur.execute("""SELECT * FROM novobud""")
@@ -98,6 +102,7 @@ def add_data_to_table_domria(*args):
 
 
 def get_from_domria():
+    """Возвращает данные из БД в таблицу dimria"""
     try:
         cur = conn.cursor()
         cur.execute("""SELECT * FROM domria""")
@@ -123,6 +128,7 @@ def add_data_to_table_olx(*args):
 
 
 def get_from_olx():
+    """Возвращает данные из БД в таблицу olx"""
     try:
         cur = conn.cursor()
         cur.execute("""SELECT * FROM olx""")
@@ -138,8 +144,8 @@ def get_from_olx():
 
 def add_data_to_table_flafy(*args):
     """Добовляет данные в таблицу flafy
-        принимает 4 аргументов:
-        title, price, link, district"""
+    принимает 4 аргументов:
+    title, price, link, district"""
     with conn:
         cur = conn.cursor()
         data = args
@@ -148,6 +154,7 @@ def add_data_to_table_flafy(*args):
 
 
 def get_from_flafy():
+    """Возвращает данные из БД в таблицу flafy"""
     try:
         cur = conn.cursor()
         cur.execute("""SELECT * FROM flafy""")
@@ -160,7 +167,7 @@ def get_from_flafy():
         if cur:
             cur.close()
 
-
+# для проверки работоспособности
 if __name__ == '__main__':
     # change_value_in_bill("10770", "dollar", 1000)
     # delete_data

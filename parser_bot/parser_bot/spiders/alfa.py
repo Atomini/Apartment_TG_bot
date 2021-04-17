@@ -39,7 +39,6 @@ class CrawlerWorker(mp.Process):
 
 class AlfaSpider(scrapy.Spider):
     name = 'alfa'
-    allowed_domains = ['https://alfabank.ua/ru']
     start_urls = ['https://alfabank.ua/ru/']
 
     def parse(self, response):

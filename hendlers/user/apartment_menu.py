@@ -1,7 +1,5 @@
-from aiogram import types
-from aiogram.types import CallbackQuery, InputMediaPhoto
+from aiogram.types import CallbackQuery
 from aiogram.utils import exceptions
-
 from database import get_from_novobud, delete_data, get_from_domria, get_from_olx, get_from_flafy
 from keyboards.inline import offers_kb
 from misc import dp

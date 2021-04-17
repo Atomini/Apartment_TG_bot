@@ -1,3 +1,4 @@
+"""создание БД"""
 import sqlite3 as sql
 
 

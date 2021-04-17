@@ -1,4 +1,3 @@
-
 import re
 import database
 import logging

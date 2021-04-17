@@ -80,25 +80,19 @@ class OlxSpider(scrapy.Spider):
     #         url = response.urljoin(href)
     #         yield scrapy.Request(url=url,
     #                              callback=self.parse_page)
-    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    #  не работает так как страныца генерируется динамически
-    # def parse_page(self, response):
-    #     print(response.url)
-    #     title = response.xpath('/html/head').extract()
-    #     yield {"title": title}
 
+    # ---------------------или---------------------------------------------
+    #  Работает но медленно на обработку одной ссылки уходит ~ 24 сек -> на 160 ссылок (4 страницы) ~ 66 минут
+    #     def parse_page(self, response):
+    #         from requests_html import HTMLSession
+    #         url = response.url
+    #         s = HTMLSession()
+    #         r = s.get(url)
+    #         r.html.render(sleep=1)
+    #         title = r.html.xpath('//*[@class="css-g5mtbi-Text"]/text()', first=True)
+    #         print(title)
+    #         print(url)
 
-# ---------------------или---------------------------------------------
-#  Работает но медленно на обработку одной ссылки уходит ~ 24 сек -> на 160 ссылок (4 страницы) ~ 66 минут
-#     def parse_page(self, response):
-#         from requests_html import HTMLSession
-#         url = response.url
-#         s = HTMLSession()
-#         r = s.get(url)
-#         r.html.render(sleep=1)
-#         title = r.html.xpath('//*[@class="css-g5mtbi-Text"]/text()', first=True)
-#         print(title)
-#         print(url)
 
 def start_olx():
     result_queue1 = mp.Queue()
