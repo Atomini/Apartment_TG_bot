@@ -2,7 +2,7 @@
 FROM python:3.8
 LABEL maintainer = "RetRot@fex.net"
 
-ENV TOKEN="You Tokem" admin_id="You id"
+ENV TOKEN="YOUR_TOKEN" admin_id="your_telegram_id"
 # установка рабочей директории в контейнере
 WORKDIR ./
 # копирование файла зависимостей в рабочую директорию
